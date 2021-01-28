@@ -1,114 +1,147 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState} from 'react';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+export default App = () => {
+  const buttons = [
+    'AC',
+    'DEL',
+    '%',
+    '/',
+    '7',
+    '8',
+    '9',
+    '*',
+    '4',
+    '5',
+    '6',
+    '-',
+    '3',
+    '2',
+    '1',
+    '+',
+    '0',
+    '.',
+    '+/-',
+    '=',
+  ];
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const [currentNumber, setCurrentNumber] = useState('');
+  const [lastNumber, setLastNumber] = useState('');
 
-const App: () => React$Node = () => {
+  const handleInput = (buttonPressed) => {
+    if (
+      (buttonPressed === '*') |
+      (buttonPressed === '/') |
+      (buttonPressed === '+') |
+      (buttonPressed === '-')
+    ) {
+      setCurrentNumber(currentNumber + ' ' + buttonPressed + ' ');
+      return;
+    }
+    if (buttonPressed === 'DEL') {
+      setCurrentNumber(currentNumber.substr(0, currentNumber.length - 1));
+      return;
+    }
+    if (buttonPressed === '.') {
+      setCurrentNumber(currentNumber + buttonPressed);
+      return;
+    }
+    if (buttonPressed === '+/-') {
+      return;
+    }
+    if (buttonPressed === 'AC') {
+      setLastNumber('');
+      setCurrentNumber('');
+      return;
+    }
+    if (buttonPressed === '=') {
+      setLastNumber(currentNumber + ' = ');
+      calculator();
+      return;
+    }
+    setCurrentNumber(currentNumber + buttonPressed);
+    return;
+  };
+
+  const calculator = () => {
+    const splitNumbers = currentNumber.split(' ');
+    const operator = splitNumbers[1];
+    if (operator === '*') {
+      setCurrentNumber(
+        (parseFloat(splitNumbers[0]) * parseFloat(splitNumbers[2])).toString(),
+      );
+    }
+    if (operator === '/') {
+      setCurrentNumber(
+        (parseFloat(splitNumbers[0]) / parseFloat(splitNumbers[2])).toString(),
+      );
+    }
+    if (operator === '+') {
+      setCurrentNumber(
+        (parseFloat(splitNumbers[0]) + parseFloat(splitNumbers[2])).toString(),
+      );
+    }
+    if (operator === '-') {
+      setCurrentNumber(
+        (parseFloat(splitNumbers[0]) - parseFloat(splitNumbers[2])).toString(),
+      );
+    }
+  };
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <View>
+      <View style={styles.result}>
+        <Text style={styles.historyText}>{lastNumber}</Text>
+        <Text style={styles.resultText}>{currentNumber}</Text>
+      </View>
+      <View style={styles.buttons}>
+        {buttons.map((button) => (
+          <TouchableOpacity
+            onPress={() => handleInput(button)}
+            key={button}
+            style={styles.button}>
+            <Text style={styles.textButton}>{button}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  result: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    width: '100%',
+    height: 200,
+    backgroundColor: '#f5f5f5',
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  buttons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
-  body: {
-    backgroundColor: Colors.white,
+  button: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    minHeight: 75,
+    minWidth: 75,
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  textButton: {
+    color: '#5b5b5b',
+    fontSize: 25,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
+  resultText: {
+    fontWeight: '100',
+    fontSize: 75,
+    margin: 10,
+    alignSelf: 'flex-end',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  historyText: {
+    fontSize: 22,
+    marginBottom: 0,
+    marginRight: 10,
+    alignSelf: 'flex-end',
   },
 });
-
-export default App;
